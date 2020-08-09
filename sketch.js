@@ -1,64 +1,61 @@
-var  database;
-var drawing = [];
-var currentPath = [];
+var drawing=[];
+var currentPath=[];
 var isDrawing = false;
 
-function setup(){
-    database = firebase.database();
-    createCanvas(500,500);
-    canvas.mousePressed(startPath);
-    canvas.parent('canvascontainer');
-    canvas.mouseReleased(endPath);
+function setup() {
+  canvas = createCanvas(1000, 600);
+  canvas.mousePressed(start);
+  canvas.mouseReleased(end);
 
-    var saveButton = select('#saveButton');
-    saveButton.mousePressed(saveDrawing);
+  database = firebase.database();
+
+  form = new Form();
+  form.display();
+  
 }
 
-function startPath(){
-    isDrawing = true;
-    currentPath =  [];
-    drawing.push(currentPath);
-}
+function draw() {
+  background("lightblue");
 
-function endPath(){
-    isDrawing = false;
-}
-
-function draw(){
-    background(0);
- if(isDrawing){
-     var point = {
-         x: mouseX,
-         y:mouseY
-     }
-   currentPath.push(point);
- }
-
+  if(isDrawing){
+    var point = {
+      x:mouseX,
+      y:mouseY
+    }
+    currentPath.push(point);
+  }
+  
+  strokeWeight(4);
+  noFill();
+  stroke("red");
  
- stroke(255);
- strokeWeight(4);
- noFill();
- for(var i = 0; i < drawing.length; i++){
-     var path = drawing[i];
-     beginShape();
-    for(var j = 0; j < path.length; j++){
-    vertex(path[j].x, path[j].y)
+  for(var i=0; i<drawing.length;i++){
+    var path=drawing[i];
+    beginShape();
+    for(var j=0;j<path.length;j++){
+      vertex(path[j].x,path[j].y);
     }
     endShape();
- }
- 
-}
+  }
 
-function saveDrawing(){
-    var ref = database.ref('drawings');
-    var data=  {
-        name:"My Drawing",
-        drawing:drawing
-    }
-    var result = ref.push(data, dataSent);
-    console.log(result.key);
+  form.button.mousePressed(() => {
+    saveDrawing();
+    
+});
 
-    function dataSent(err,status){
-      console.log(status);
-    }
 }
+function start(){
+    isDrawing = true;
+  currentPath=[];
+  drawing.push(currentPath);
+}
+function end(){
+    isDrawing = false;
+  }
+  function saveDrawing(){
+    var ref = database.ref('drawing');
+    var data={
+        name: "Divyam",
+        drawing :drawing
+    }
+  }
